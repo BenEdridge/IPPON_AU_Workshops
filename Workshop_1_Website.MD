@@ -75,7 +75,7 @@ Complete this before the workshop if you can, it will save time! Some of these i
 1. Once cloned `cd` into the repository and run `hugo new site bens-blog` this will create a new directory for your hugo project called `bens-blog`
 2. Find a theme you like! Currently we are using [hugo-theme-even](https://github.com/olOwOlo/hugo-theme-even) if you don't like this you can find another but it may require a different setup!
 3. Open your blog directory eg `bens-blog` and open the `themes` dir
-4. To add a theme we will be using: `git clone https://github.com/olOwOlo/hugo-theme-even /even`
+4. To add a theme we will be using: `git clone https://github.com/olOwOlo/hugo-theme-even even`
 5. Once cloned, copy `even/exampleSite/config.toml` (our site configuration) to the `bens-blog` dir and replace the default `config.toml`
 6. Go back to `bens-blog` and create a new blog post page by running `hugo new post/i_like_static_sites.md`
 7. Edit your post at: `content/post/i_like_static_sites.md` If you don't know markdown look here: https://www.markdownguide.org/basic-syntax/
