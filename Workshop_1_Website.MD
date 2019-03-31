@@ -43,10 +43,9 @@ Complete this before the workshop if you can, it will save time! Some of these i
 1. [Creating our Website Content](#💻-Creating-our-Website-Content)
 2. [Google Cloud Platform - Cloud Hosting Provider](#☁️-Google-Cloud-Platform-Cloud-Hosting-Provider)
 3. [Domain Setup and DNS config](#🌎-Domain-Setup-and-DNS-config)
-4. [Email Setup](#✉️-Email-Setup)
-5. [Cloudflare - Content Delivery Network (CDN)](#⚡-Cloudflare-Content-Delivery-Network-(CDN))
-6. [Automatic Deployment Continued](#Automatic-Deployment-Continued)
-7. [Extensions](#Extensions)
+1. [Cloudflare - Content Delivery Network (CDN)](#⚡-Cloudflare-Content-Delivery-Network-(CDN))
+2. [Automatic Deployment Continued](#Automatic-Deployment-Continued)
+3. [Extensions](#Extensions)
 
 # 💻 Creating our Website Content
 
@@ -64,28 +63,28 @@ Complete this before the workshop if you can, it will save time! Some of these i
 
 ## Getting started
 
-1. Login to github.com and `fork` the workshop repository using the button on the right, this will copy the repository into your own github.com account
+1. Login to github.com and `fork` the workshop repository using the button on the right, this will copy the repository into your own github.com account (note any new updates from the original repository will be merged later)
 
 ![alt text](media/Workshop1/fork_repo.png "Forking")
 
-2. Now run a `git clone <url>` using the repository you forked in your own github. This will download the repository to the directory you are in.
+1. Now run a `git clone <url>` using the repository you forked in your own github. This will download the repository to the directory you are in.
 
 ![alt text](media/Workshop1/clone_with_https.png "Clone")
 
-1. Once cloned `cd` into the repository and run `hugo new site bens-blog` this will create a new directory for your hugo project called `bens-blog`
+1. Once cloned `cd` into the repository and run `hugo new site my-blog` where `my-blog` is a name of your choice this will create a new directory for your hugo project called `my-blog`
 2. Find a theme you like! Currently we are using [hugo-theme-even](https://github.com/olOwOlo/hugo-theme-even) if you don't like this you can find another but it may require a different setup!
-3. Open your blog directory eg `bens-blog` and open the `themes` dir
-4. To add a theme we will be using: `git clone https://github.com/olOwOlo/hugo-theme-even even`
-5. Once cloned, copy `even/exampleSite/config.toml` (our site configuration) to the `bens-blog` dir and replace the default `config.toml`
-6. Go back to `bens-blog` and create a new blog post page by running `hugo new post/i_like_static_sites.md`
-7. Edit your post at: `content/post/i_like_static_sites.md` If you don't know markdown look here: https://www.markdownguide.org/basic-syntax/
+3. Open your blog directory eg `my-blog` and open the `themes` dir
+4. To add a theme we will be using: `git clone https://github.com/olOwOlo/hugo-theme-even even` this will clone the repo into the `even` directory
+5. Once cloned, copy `even/exampleSite/config.toml` (our site configuration) to the `my-blog` dir and replace the default `config.toml`
+6. Still in `my-blog` dir create a new blog post by running `hugo new post/name_of_your_post.md`
+7. Edit your post at: `content/post/name_of_your_post.md` If you don't know markdown look here: https://www.markdownguide.org/basic-syntax/
 
 Add something like the following:
 ```
   1 ---
-  2 title: "I_like"
+  2 title: "My awesome article"
   3 date: 2019-03-29T21:50:00+11:00
-  4 draft: true
+  4 draft: false
   5 ---
   6
   7 # Hello welcome to my blog
@@ -93,16 +92,15 @@ Add something like the following:
   9 Thanks for joining
 ```
 
-1.  Now try and run your web server `hugo server -D` Your server will now be running at: http://localhost:1313
-2.  Don't stop the server and make some changes to your post. You should see it hot reload.
-3.  Create more blog posts and pages relevant to your wishes or skip if you wish to get into the nitty gritty deployment
-4.  Run `hugo` to build all your assets including files marked as drafts
-5.  Check the `bens-blog/public` directory to see you all the asset files/folder created from our previous command
-6.  Files in `public` are now the self contained build and will be served from Google Cloud Storage in the next steps.
-7.  You should also be able to open `bens-blog/public/index.html` and see your website without running a server
+`Note: the "draft" = false`
 
-**Be careful you may need configure the base url correctly in the `config.toml` file**
-- If you are serving from example.com you will need to add this into the `config.toml` file under the `baseUrl` setting
+1.  Now try and run your web server `hugo server -D` Your server will now be running at: http://localhost:1313
+2.  Don't stop the server and make some changes to your post. You should see it hot reload, `config.toml` also supports hot reloading.
+3.  Stop the server using ctrl + c
+4.  Run `hugo` to build all your asset and files the the `public` dir
+5.  Check the `my-blog/public` directory to see you all the assets/files/folders created from our previous command
+6.  Files in `public` are now the self contained build and will be served from Google Cloud Storage in the next steps.
+7.  Make sure you only upload content in `public`
 
 ## 📚 Resources
 The Jamstack paradigm - https://jamstack.wtf  
@@ -121,27 +119,30 @@ To upload to GCS you can use the `gcloud` tool or the web interface. `gcloud` is
 
 ## It's GCP time
 
-1. Login to the [Google Cloud Console](https://console.cloud.google.com/) with your Google account
+1. Login to the [Google Cloud Console](https://console.cloud.google.com) with your Google account
 2. Make sure you have enabled billing and your credit/debit card is added otherwise you can't create a project or use the service
 3. **Optional:** Set billing alerts for something like $10 so you don't waste the credit.
-4. Create a new project for example: `bens-blog`
-5. Create a bucket under storage with a name like: `bens-blog`
+4. Create a new project for example: `my-blog`
+5. Create a bucket under `Storage` with a name like: `my-blog`
 6. Select `permissions` and update permissions allowing `allUsers` access. This will allow anyone access to this bucket and give the role `Storage Object Viewer` this means anyone can access the content of the bucket. Be careful what you upload from now on.
 
 ![alt text](media/Workshop1/add_Users.png "GCP permissions")
 
 7. Make sure you have generated your website files using `hugo` 
-8. Then upload all files in the `bens-blog/public` directory to this bucket
-9. Go back to bucket browser and find the public link to your file. It will be similar to: https://storage.googleapis.com/bens-blog/index.html where `bens-blog` is your bucket name chosen before.
+8. Then upload all files inside the `public` directory to this bucket
+9. Go back to bucket browser and find the public link to your file. It will be similar to: https://storage.googleapis.com/bens-blog/index.html where `my-blog` is your bucket name chosen before.
+10. Add a suffix for the bucket eg. index.html and 404.html so it will be the default page
 
-![alt text](media/Workshop1/public_access.png "Forking")
+![alt text](media/Workshop1/public_access.png "Public Access")
 
-10. Make sure everything is displayed correctly. You may need to change the config.toml file `baseURL` or set your permissions correctly on the bucket.
+11. Make sure everything is displayed correctly. You may need to change the config.toml file `baseURL` or set your permissions correctly on the bucket.
 
 ```
-baseUrl = "storage.googleapis.com/bens-blog/"  
-title = "Choose an awesome title"
+baseUrl = "https://storage.googleapis.com/my-blog/"
 ```
+
+1.  Every time you change the `config.toml` file you must rebuild the blog using `hugo` and upload
+2.  The config is only used for building the website and generating all these static html files
 
 ## Starting to get Automated
 
@@ -152,13 +153,15 @@ To start automation we should understand how to automatically build and upload o
 3.  Run: `gcloud auth login` this will open a browser window to login to Google.com
 4. Once logged in make some changes to your basic website or add another blog post like before
 5. Run `hugo` again to build everything into the output directory `public`
-6. Now you can use `gcloud` to upload to our bucket without using the gui. Make sure you `cd` into the `bens-blog` dir and then run the command below with your bucket name you created before.
+6. Now you can use `gcloud` to upload to our bucket without using the gui. Make sure you `cd` into the `my-blog` dir and then run the command below with your bucket name you created before.
+   
+`gsutil` is the Google Storage Utility and allows you to manage GCS this command will do a recursive sync of the `public` dir to the GCS bucket and upload all files.
+
  ```
  gsutil rsync -R public gs://bucket-name
  ```
-`gsutil` is the Google Storage Utility and allows you to manage GCS this command will do a recursive sync of the `public` dir to the GCS bucket and upload all files.
 
-Now navigate to your bucket again, have a look and see if your files are there, you can access your site. It should be available at: storage.googleapis.com/bucket-name/index.html
+Now navigate to your bucket again, have a look and see if your files are there, you can access your site. It should be available at: http://storage.googleapis.com/bucket-name/index.html
 
 Well done, onto our domain setup now!
 
@@ -169,7 +172,7 @@ Well done, onto our domain setup now!
 
 # 🌎 Domain Setup and DNS config
 
-Time to make use of that `.me` domain or another domain on namecheap.com. We need to use the Domain Name System (DNS) to point our domain to the endpoint in Google Cloud Platform.
+Time to make use of that `.me` domain or another domain. We need to use the Domain Name System (DNS) to point our domain to the endpoint in Google Cloud Platform.
 
 1. Login to [Google Search Console](https://search.google.com/search-console/welcome) with the **same** account you used to Signup for Google Cloud Platform. Here you will need to add your new fancy domain to the console so we can verify our ownership of the domain for GCP.
 
@@ -178,24 +181,25 @@ Time to make use of that `.me` domain or another domain on namecheap.com. We nee
 1. Enter your domain name you have registered as a property
 2. You will be presented with an option `Verify ownership via DNS record` copy that record so you can add it to namecheap.com DNS settings.
 3. Log into namecheap.com go to `Advanced DNS` set up a new DNS record with the valid `TXT` record with `TTL = 1min` to confirm your ownership of the domain.
+4. After make sure you remove any other strange DNS records like redirects or for `www`
 
 ```
 NAME        TYPE     DATA
 @           TXT      google-site-verification=12356abcdef....
 ```
 
-You should also add a `CNAME` record which points your domain to Google. If you are wondering what the `@` is it means the root domain will point to Google Storage. If you put `test` it would end up being a subdomain like test.yourdomain.com
+You should also add a `CNAME` record which points your domain to Google. If you are wondering what the `@` is just means only domain (no subdomain like www or api) will point to Google Storage. If you put `test` it would end up being a subdomain like test.yourdomain.com
 
 ```
 NAME        TYPE     DATA
 @           CNAME    c.storage.googleapis.com
 ```
 
-4. Now go back to the search console and try to re-verify your ownership, it may take a little while but should verify! This means you can now link your domain with the GCS storage bucket
-5. Log back into Google Cloud Platform and try create a new bucket with the name of your domain eg. `yourdomain.com` if verification was successful you should be able to do this.
-6.  Try it out, you may need to wait a little bit for the DNS settings to propagate again
-7. If you get any errors like below you may have some config issues check your permissions, bucket name etc.
-8. If all is well your website should now be resolved through yourdomain.com
+1. Now go back to the search console and try to re-verify your ownership, it may take a little while but should verify! This means you can now link your domain with the GCS storage bucket
+2. Log back into Google Cloud Platform and try create a new bucket with the name of your domain eg. `yourdomain.com` if verification was successful you should be able to do this.
+3.  Try it out, you may need to wait a little bit for the DNS settings to propagate again
+4. If you get any errors like below you may have some config issues check your permissions, bucket name etc.
+5. If all is well your website should now be resolved through yourdomain.com
 
 ```
 <Error>
@@ -205,7 +209,7 @@ NAME        TYPE     DATA
 ```
 
 ## 🔥 Extra:
-- Explore some of the other DNS types, try creating a subdomain eg. blog.yourdomain.com
+- Explore some of the other DNS types
 - Multiple buckets can be created for different subdomains
 
 # ⚡ Cloudflare - Content Delivery Network (CDN)
@@ -224,13 +228,14 @@ Make sure you modify the records in namecheap.com to match the required DNS sett
 ![alt text](media/Workshop1/cloudflare_setup.png "Screenshot of final design")
 
 4. Log back into namecheap.com and update your nameservers 
-5. Under the `Domain` settings in the dashboard for your domain change the `Nameservers` setting to the above `Custom` nameservers for cloudflare
+5. Under the `Domain` settings in the dashboard for your domain change the `Nameservers` setting to the nameservers for cloudflare (These might be different on your system, don't copy the above!)
 6. This may take quite a while to complete so you may only have you Cloudflare setup after you have left this workshop
 7. Verify the settings are correct and confirm
 8. `Important` move onto the next section then come back come back here
 9. Go back to cloudflare.com and check the verification
 10. If you are verified retry your domain using [cdnplanet](https://www.cdnplanet.com/tools/cdnperfcheck)
 11. You should see improved results!
+12. You will also need to go to the `rules` tab and create a rule `yourdomain.com/*` and enable full caching of everything including HTML pages
 
 ## 🔥 Extra:
 - Cloudflare has a huge amount of options both free and paid, explore all the tabs!
@@ -242,7 +247,7 @@ We can make use of Github and TravisCI/CircleCI for our deployment toolkit. We w
 ## Using CircleCI for auto deployment
 
 1. Create a `.circleci` folder in the root directory of the repository
-2. Inside this directory create the following content in a `config.yml` file where `blog-name` is the directory in your repo and `domain.com` is your chosen domain, or the standard bucket if you don't have the domain
+2. Inside this directory create the following content in a `config.yml` file where `blog-name` is the directory in your repo and `domain.com` is your chosen domain, or the standard bucket if you don't have the domain. The below is a configuration for CircleCI, notice the docker image for google cloud-sdk.
 
 ```
 version: 2
@@ -270,7 +275,6 @@ jobs:
 8. As long as the `.circleci/config.yml` is present then cirlceci.com will pick up the repository and start trying to run the above
 9. Wait for a push, you will see a red failure this means circleci.com is not authorised to access your GCS bucket and upload content
 
-
 ![alt text](media/Workshop1/ci_build_example.png "Build Status")
 
 ### For further info:  
@@ -281,14 +285,14 @@ https://circleci.com/docs/2.0/google-auth/
 1. Make sure you follow this: https://cloud.google.com/sdk/docs/authorizing#authorizing_with_a_service_account
 2. Log back into GCP
 3. Go to `Service Accounts` Tab https://console.cloud.google.com/iam-admin/serviceaccounts
-4. Create a service account
+4. Create a service account for circleci to access your github account
 
 ![alt text](media/Workshop1/service_account.png "Create a service account")
 
 5. Choose a name and description like `circleci` and `allows access to my-bucket`
 6. Select `permissions` as `Storage Object Admin`
 7. Skip user access
-8. `Create key` then download the `json` file
+8. `Create key` then download the `json` file, this will be used to populate the environment variables for the circleci config.
 
 The content will be similar to below:
 
@@ -309,46 +313,48 @@ The content will be similar to below:
 
 13. Run `gcloud auth activate-service-account --key-file=file.json` where `file.json` is the file you downloaded
 14. You should get a successful result `Activated service account credentials for...`
-15. Once you have a service account add these environment variables to your build environment in CircleCI. where `GCLOUD_SERVICE_KEY` is the content of the json.
+15. Once you have a service account add these environment variables to your project in CircleCI. where `GCLOUD_SERVICE_KEY` is the content of the json and `GOOGLE_PROJECT_ID` is the name of your project in the Google Cloud Console.
    
 ```
 GCLOUD_SERVICE_KEY
 GOOGLE_PROJECT_ID
 ```
 
-![alt text](media/Workshop1/env_setup.png "Forking")
+![alt text](media/Workshop1/env_setup.png "Env")
 
 1. Once everything has been setup make some changes to your website code
+   
 ```
 hugo
-git commit -m "amazing build"
+git commit -m "A new message noting your changes"
 git push
 ```
 
 1. Now check CircleCI, if everything is setup correctly you should see a nice green tick and success!
-2. If not you can just re-run the `build` in the CircleCI website and check error messages to make sure everything is setup correctly!
-3.  Login to GCP and check the content of your bucket has it changed?
-4.  Now we need to login to cloudflare.com to carry out cache invalidation and remove our old content from cache
-5.  Find the cache invalidation section in cloudflare.com and try it, check your website has updated
+2. If not you may have made a small mistake somewhere, check the Environment variables
+3. You can re-run the `build` in the CircleCI website and check error messages to make sure everything is setup correctly
+4.  Login to GCP and check the content of your bucket. Has it changed?
+5.  Now we you to login to cloudflare.com to carry out cache invalidation and remove our old content from cache this is under the `cache` tab in cloudflare
+6.  purge everything
+7.  Once done do a test of your website and see if there are any performance improvements!
 
 ## 🔥 Extra:
-- Look into open source CI/CD platforms eg. Travis CI
-- gitlab.com provides some great features including it's own CI/CD built in
-- Setup your own more complicated CI/CD pipeline in GCP and make use of that credit
+- Try use gitlab.com and the gitlab CI/CD features
+- Look at into Travis and Jenkins as well
 
 ## 📚 Resources
-Docker - docker.com  
-CircleCI vs Travis vs Jenkins  
-Atlassian [CI/CD principles](https://www.atlassian.com/continuous-delivery/principles/continuous-integration-vs-delivery-vs-deployment)
+Docker - docker.com   
+Atlassian - [CI/CD principles](https://www.atlassian.com/continuous-delivery/principles/continuous-integration-vs-delivery-vs-deployment)
 
+# Extending your project
 
-# Extensions
+<details>
+<summary>Receiving Email @yourcustomdomain.com</summary>
+<p>
 
 ## ✉️ Email Setup
 
-> To enable email forwarding in namecheap.com we will need to change the nameservers back to namecheap.com nameservers thus losing our ability to use the cloudflare.com CDN.
-
-We now have our domain pointing to our website but what about emails. Don't you want to receive emails @ yourdomain.com?
+> Note: To enable email forwarding in we will need to change the nameservers back to namecheap.com nameservers thus losing our ability to use the cloudflare.com CDN + HTTPS
 
 We can go back to namecheap.com and enable `email forwarding` which will forward emails to our account used to signup to namecheap. We can set a `catch-all` or just have certain emails forward. Emails being sent won't be sent from this address but if you want to set that up as well check the extras section below.
 
@@ -362,18 +368,28 @@ Set something up like the following:
 
 Depending on whether you set a catch-all or not you should be able to send an email to the relevant address: eg. `<anything>@yourdomain.com`
 
-## 🔥 Extensions:
-- Read into DMARC email validation with DNS
-- Setup your own email forwarding/filtering on AWS using SES
-- Setup free sender emailing service so you can send emails from your domain eg. Received from me@awesomedomain.com rather than forwarding to your gmail.com email.
-- Dynamic content
-  - 3rd party (form submissions, comment sections)
-  - Serverless functions for dynamically creating pages or sending an email
+This will then be forwarded to the email used for namecheap.com
+
+</p>
+</details>
+
+<details>
+<summary>Sending Emails from yourname@yourdomain.com</summary>
+<p>
+
+</p>
+</details>
+
+- Utilising Serverless platforms
+  - AWS Lambda
+  - Google Cloud Functions
+  - The Serverless framework https://serverless.com/
 - Extra subdomains and features eg. help.yourdomain.com
-- Switching the static site hosting to Amazon Web Services
+- Switching to Amazon Web Services
 - SEO
   - business.google.com
   - search.console.google.com
+  - [Google Webmasters](https://support.google.com/webmasters/answer/7451184?hl=en)
   
 # Acknowledgements
 https://github.com/olOwOlo/hugo-theme-even
