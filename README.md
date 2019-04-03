@@ -56,7 +56,7 @@ In this workshop you will be adding more features to your website and hacking in
 Create an issue, send me a message or feel free make a pull request and edit this guide ❤️
 
 1. Fork the repository into your own account
-2. Then follow this [guide](https://help.github.com/en/articles) on making pull requests
+2. Then follow this [guide](https://help.github.com/en/articles/creating-a-pull-request-from-a-fork) on making pull requests
 
 # Acknowledgements and Inspiration
 https://github.com/node-girls and all their amazing work!  
